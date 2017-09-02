@@ -59,20 +59,20 @@ public class Main {
 		final String regexStep2 = "^[" + Main.VOWELS + "]{1}$";
 		final Pattern pattern = Pattern.compile(regexStep1, Pattern.CASE_INSENSITIVE);
 		final Matcher matcher = pattern.matcher(sentence);
-		final StringBuffer phravasave = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		
 		/* Apply pattern n°1 for main replacement rule */
 		while (matcher.find()) {
-			matcher.appendReplacement(phravasave, matcher.group(1) + replacement + matcher.group(2));
+			matcher.appendReplacement(sb, matcher.group(1) + replacement + matcher.group(2));
 		}
-		matcher.appendTail(phravasave);
+		matcher.appendTail(sb);
 		
 		/* Apply Pattern n°2 to deal with first vowel replacement*/
-		if (String.valueOf(phravasave.charAt(0)).matches(regexStep2)) {
-			phravasave.insert(0, replacement);
+		if (String.valueOf(sb.charAt(0)).matches(regexStep2)) {
+			sb.insert(0, replacement);
 		}
 
-		return phravasave.toString();
+		return sb.toString();
 	}
 	
 	/**
@@ -83,21 +83,22 @@ public class Main {
 	 */
 	public static String unJavanize(String sentence) {
 		
-		final String seekRegex = "(av){1}";
-		final String regex = "([" + Main.CONSONANTS + "]{1})" + seekRegex + "([" + Main.VOWELS + "]{1})";
-		final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-		final StringBuffer phravasave = new StringBuffer();
+		final String frontRegex = "(av){1}";
+		final String mainRegex = "([" + Main.CONSONANTS + "]{1})" + frontRegex + "([" + Main.VOWELS + "]{1})";
+		final Pattern frontPattern = Pattern.compile(frontRegex, Pattern.CASE_INSENSITIVE);
+		final Pattern mainPattern = Pattern.compile(mainRegex, Pattern.CASE_INSENSITIVE);
+		final StringBuffer sb = new StringBuffer();
 		
 		/* Remove first seek if exists */
-		sentence = sentence.replaceFirst(seekRegex, "");
+		sentence = sentence.replaceFirst(frontPattern.pattern(), "");
 		
 		/* Search for main pattern replacement */
-		final Matcher matcher = pattern.matcher(sentence);
+		final Matcher matcher = mainPattern.matcher(sentence);
 		while (matcher.find()) {
-			matcher.appendReplacement(phravasave, matcher.group(1) + matcher.group(3));
+			matcher.appendReplacement(sb, matcher.group(1) + matcher.group(3));
 		}
-		matcher.appendTail(phravasave);
+		matcher.appendTail(sb);
 		
-		return phravasave.toString();
+		return sb.toString();
 	}
 }
